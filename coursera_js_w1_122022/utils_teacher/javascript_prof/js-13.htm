@@ -1,0 +1,10 @@
+<p>
+    <!--span - finding id person call variable st=docum.... Chuck call .innerHtml-->
+Hello <b><span id="person">Chuck</span></b> there - debugging dom.
+</p> 
+<script type="text/javascript">
+console.dir(document.getElementById('person'));
+st = document.getElementById('person').innerHTML;
+console.log("ST = "+st); //showing on the console - showVariableOnConsole.JPG
+alert('Hi there ' + st);
+document.getElementById('person').innerHTML = 'Joseph'; //changing name calling by code above

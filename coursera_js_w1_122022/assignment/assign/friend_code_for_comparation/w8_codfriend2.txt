@@ -1,0 +1,184 @@
+//Matheus
+/*********************************login************************************/
+<?php // Do not put any HTML above this line
+
+if ( isset($_POST['cancel'] ) ) {
+    // Redirect the browser to the main page
+    header("Location: index.php");
+    return;
+}
+
+session_start();
+
+$salt = 'XyZzy12*_';
+$stored_hash = '1a52e17fa899cf40fb04cfc42e6352f1';  // Pw is php123
+
+//$_SESSION['message'] = false;  // If we have no POST data
+
+// Check to see if we have some POST data, if we do process it
+if ( isset($_POST['email']) && isset($_POST['pass']) ) {
+    if ( strlen($_POST['email']) < 1 || strlen($_POST['pass']) < 1 ) { // If the forms are empty
+        $_SESSION['message'] = "Email and password are required";
+        header("Location: login.php");
+        return;
+    } elseif ( ! str_contains($_POST['email'], '@') ) { // If the 'user name' forms NOT contains an at-sign (@)
+        $_SESSION['message'] = "Email must have an at-sign (@)";
+        header("Location: login.php");
+        return;
+    } else {  // If no problem are enconter
+        $check = hash('md5', $salt.$_POST['pass']); // Calculate the hash for the password typed
+        if ( $check == $stored_hash ) { // If the password ARE correct
+            $_SESSION['name'] = $_POST['email'];
+            error_log("Login success ".$_SESSION['name']);
+            // Redirect the browser to view.php
+            header("Location: view.php");
+            return;
+        } else { // If the password ARE NOT correct
+            error_log("Login fail ".$_POST['email']." $check");
+            $_SESSION['message'] = "Incorrect password";
+            header("Location: login.php");
+            return;
+        }
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Matheus Passos da Rocha's Login Page</title>
+</head>
+<body>
+    <h1>Please Log In</h1>
+    <?php
+    if ( isset($_SESSION['message']) ) {
+        echo('<p style="color: red;">'.$_SESSION['message']."</p>\n");
+        unset($_SESSION['message']);
+    }
+    ?>
+    <form method="POST">
+        <label for="nam">User Name</label>
+        <input type="text" name="email" id="nam"><br/>
+        <label for="id_1723">Password</label>
+        <input type="text" name="pass" id="id_1723"><br/>
+        <input type="submit" value="Log In">
+        <input type="submit" name="cancel" value="Cancel">
+    </form>
+    <p>For a password hint, view source and find a password hint in the HTML comments.</p>
+    <!-- Hint: The password is the three character name of the programming language used in this class (all lower case) followed by 123. -->
+
+</body>
+</html>
+
+/********************************add***************************************/
+
+<?php
+session_start();
+
+if ( ! isset($_SESSION['name']) ) {
+    die("Not logged in");
+}
+
+require_once ('pdo.php');
+/* pdo.php:
+<?php
+$pdo = new PDO('mysql:host=localhost;port=3306;dbname=misc', 'matheus', 'admin');
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+?>
+*/
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Matheus Passos da Rocha's Automobile Tracker</title>
+</head>
+<body>
+    <h1>Tracking Autos for <?=htmlentities($_SESSION['name'])?></h1>
+    <?php
+    if( isset($_SESSION['success']) ) {
+        echo('<p style="color: green;">'.$_SESSION['success']."</p>\n");
+        unset($_SESSION['success']);
+    }
+    ?>
+    <h2>Automobiles</h2>
+    <ul>
+    <?php
+    $stmt = $pdo->query('SELECT make, year, mileage FROM autos');
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo ("<li>");
+        echo (htmlentities($row['year']) ." ". htmlentities($row['make']) ." / ". htmlentities($row['mileage']));
+        echo ("</li>\n");
+    }
+    ?>
+    </ul>
+    <p> <a href="add.php">Add New</a> | <a href="logout.php">Logout</a> </p>
+</body>
+</html>
+
+/********************************view**************************************/
+
+<?php // Do not put any HTML above this line
+session_start();
+
+if ( ! isset($_SESSION['name']) ) {
+    die("Not logged in");
+}
+
+if ( isset($_POST['cancel'] ) ) {
+    // Redirect the browser to the main page
+    header("Location: view.php");
+    return;
+}
+
+require_once ('pdo.php');
+/* pdo.php:
+<?php
+$pdo = new PDO('mysql:host=localhost;port=3306;dbname=misc', 'matheus', 'admin');
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+?>
+*/
+
+// Check to see if we have some POST data, if we do process it
+if ( isset($_POST['make']) && isset($_POST['year']) && isset($_POST['mileage']) ) {
+    if ( ! is_numeric($_POST['year']) || ! is_numeric($_POST['mileage'])) { // If 'year' and 'mileage' ARE NOT numbers
+        $_SESSION['message'] = "Mileage and year must be numeric";
+        header("Location: add.php");
+        return;
+    } elseif ( strlen($_POST['make']) < 1 ) { // If the 'make' forms are empty
+        $_SESSION['message'] = "Make is required";
+        header("Location: add.php");
+        return;
+    } else {  // If no problem are enconter insert tha data into the database
+        $stmt = $pdo->prepare('INSERT INTO autos (make, year, mileage) VALUES ( :mk, :yr, :mi)');
+        $stmt->execute(array(   ':mk' => $_POST['make'],
+                                ':yr' => $_POST['year'],
+                                ':mi' => $_POST['mileage']));
+        $_SESSION['success'] = "Record inserted";
+        header("Location: view.php");
+        return;
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Matheus Passos da Rocha's Automobile Tracker</title>
+</head>
+<body>
+    <h1>Tracking Autos for <?=htmlentities($_SESSION['name'])?></h1>
+    <?php
+    if ( isset($_SESSION['message']) ) {
+        echo('<p style="color: red;">'.$_SESSION['message']."</p>\n");
+        unset($_SESSION['message']);
+    }
+    ?>
+    <form method="post">
+        <p>Make: <input type="text" name="make" size="60"/></p>
+        <p>Year: <input type="text" name="year"/></p>
+        <p>Mileage: <input type="text" name="mileage"/></p>
+        <input type="submit" value="Add">
+        <input type="submit" name="cancel" value="Cancel">
+    </form>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<p>One Paragraph - do showing error on browser if has an code error</p>
+<script type="text/javascript"> 
+  alert("I am broken');
+  alert("I am good");
+
+  if (typeof console == "undefined"){
+      this.console = {log: function (){}}
+  }
+
+
+</script> 
+<p>Two Paragraph - we cant find error on developer mode, sources = serch the file and click on the error console</p>
+<script type="text/javascript"> 
+  alert("Second time");
+</script> 
+<p>Three Paragraph</p>

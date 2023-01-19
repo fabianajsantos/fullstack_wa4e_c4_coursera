@@ -1,0 +1,47 @@
+body{
+    height: 100vh; /*altura inteira da tela */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /*
+    background-color: #ddd;
+    */
+}
+
+.form-login{
+ /*   flex-basis: 500px;*/
+ /*   color:red;*/
+    width: 400px;
+    margin: 10px auto 10px;
+    padding: 10px;
+    position: relative;
+
+}
+/*
+.login-card .card-header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font: size 1.8em;
+}*/
+
+/*
+.login-card .card-body{
+    display: flex;
+    justify-content: flex-start;
+    justify-content: center;
+    !*color:red;*!
+    width: 300px;
+    margin: 60px auto 30px;
+    padding: 20px;
+    position: relative;
+
+
+}
+*/
+ */
+.login-card .card-footer{
+    display: flex;
+    justify-content: flex-end;
+}
+

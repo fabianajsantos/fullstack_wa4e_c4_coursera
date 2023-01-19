@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fabiana Santos - b16238d0</title>
+    <link rel="stylesheet" href="assets/css/comum.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/icofont.min.css">
+    <link rel="stylesheet" href="assets/css/login.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Please Log In</h1>
+
+        <form class="form-login" method="post">
+            <div class="login-card card">
+                <div class="card-header">
+                    <span class="font-weight-bold">Please Login</span>
+                </div>
+                <div class="card-body">
+                    <div class="alert"> <?php
+                                        // Note triple not equals and think how badly double
+                                        // not equals would work here...
+                                        if ($failure !== false) {
+                                            // Look closely at the use of single and double quotes
+                                            echo ('<div class="alert"><p style="color: red;">' . htmlentities($failure) . "</p>\n");
+                                        }
+                                        ?></div>
+                    <div class="form-group">
+                        <label for="email">E-mail </label>
+                        <input type="text" size="40" name="who">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password </label>
+                        <input type="text" size="38" name="pass">
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Log in" name="Log In" />
+                        <a href=" <?php echo ($_SERVER['PHP_SELF']); ?>">Refresh</a>
+                    </div>
+                    <?php
+                    // Note triple not equals and think how badly double
+                    // not equals would work here...
+                    ?>
+                </div>
+        </form>
+</body>
+
+</html>
+
+<?php
+
+require "pdo.php";
+
+if (isset($_POST['cancel'])) {
+    // Redirect the browser to autos.php
+    header("Location: index.php");
+    return;
+}
+
+$salt = 'XyZzy12*_';
+$stored_hash = '1a52e17fa899cf40fb04cfc42e6352f1';
+
+$failure = false;  // If we have no POST data
+
+if (isset($_POST['who']) && isset($_POST['pass'])) {
+
+    //echo ("<p>Handling POST data...</p>\n");
+    $e = $_POST['who'];
+    $p = $_POST['pass'];
+
+    $sql = "SELECT * FROM users 
+       WHERE who = '$e'
+       AND pass = '$p'";
+
+    // echo "<p>$sql</p>\n";
+
+    $stmt = $pdo->query($sql);
+    $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($row == false) {
+        // if (strlen($e) < 1 || strlen($p) < 1) {
+        //     echo "Email and password are required";
+        // } else if (filter_var($e, FILTER_VALIDATE_EMAIL) == false) {
+        //     echo "Email must have an at-sign (@)";
+        // } else {
+        //     echo "Incorrect password";
+        // }
+
+
+        if (strlen($e) < 1 || strlen($p) < 1) {
+            //if (strlen($_POST['who']) < 1 || strlen($_POST['pass']) < 1)
+            $failure = "Email and password are required";
+        } else if ($check = hash('md5', $salt . $_POST['pass']) !== $stored_hash) {
+            $failure = "Incorrect password";
+            /*if ($failure == false) {
+                // Look closely at the use of single and double quotes
+                echo ('<p style="color: red;">' . htmlentities($failure) . "</p>\n");
+            }*/
+        } else if (filter_var($e, FILTER_VALIDATE_EMAIL) == false) {
+                 $failure = "Email must have an at-sign (@)";
+        }
+    } else {
+        //direciona
+        header("Location: autos.php?name=" . urlencode($_POST['who']));
+        return;
+    }
+}
+
+//                  echo '<div class="alert"><span style="color:#F00;text-align:center;">Incorrect password</span></div>';
+?>
