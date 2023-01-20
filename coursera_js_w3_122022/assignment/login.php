@@ -3,7 +3,7 @@
 session_start();
 
 require_once "pdo.php";
-require_once "bootstrap.php";
+//require_once "bootstrap.php";
 require_once "tools.php";
 
 if (isset($_POST['cancel'])) {

@@ -138,7 +138,20 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
         <p>Position: <input type="submit" id="addPos" value="+">
         <div id="position_fields">
         <?php //print_r($positions);
-                    ///HOW CAN I DO THIS!!!!!!!
+                    ///HOW CAN I DO THIS!!!!!!!////  GRATEFULL ARMANDO
+
+        $positions = loadPos($pdo, $row['profile_id']);
+
+        $countPos = 0;
+        foreach ($positions as &$pos) {
+            $countPos++;
+            echo '<div id="position'.$countPos.'">';
+            echo '    <p>Year: <input type="text" name="year'.$countPos.'" value="'.$pos["year"].'" />';
+            /*INSIDE PHP CODE I HAD A JQUERY CODE ON ONCLICK*/
+            echo '        <input type="button" value="-" onclick="$(\'#position'.$countPos.'\').remove();countPos--;return false;"></p>';
+            echo '        <textarea name="desc'.$countPos.'" rows="8" cols="80">'.$pos["description"].'</textarea>';
+            echo '</div>';
+        }
             ?>
         </div>
         </p>

@@ -138,7 +138,7 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
 <div class="container">
     <h1>Editing profile for <?php echo $_SESSION['name']; ?></h1>
     <?php flashMessages(); ?>
-    <form method="post" action="edit.php">
+    <form method="post" action="../edit.php">
         <input type="hidden" name="profile_id" value="<?= $profile_id ?>">
         <!--   <div class="form-group">-->
         <p>First Name:
@@ -155,7 +155,7 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
         <div id="position_fields"></div>
         </p>
         <input class="btn btn-primary btn-sm" type="submit" value="Save">
-        <a href="index.php" class="btn btn-primary btn-sm" role="button">Cancel</a>
+        <a href="../index.php" class="btn btn-primary btn-sm" role="button">Cancel</a>
 
     </form>
 </body>

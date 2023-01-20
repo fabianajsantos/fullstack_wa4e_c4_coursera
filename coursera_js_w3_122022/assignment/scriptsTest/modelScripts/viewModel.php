@@ -100,3 +100,147 @@ $row_position = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </body>
 </html>
 
+********
+
+
+<?php
+
+// Guardian: Make sure that user_id is present
+if ( ! isset($_GET['profile_id']) ) {
+  $_SESSION['error'] = "Missing profile_id";
+  header('Location: index.php');
+  return;
+}
+
+require_once 'pdo.php';
+require_once 'util.php';
+
+$stmt = $pdo->prepare("SELECT * FROM Profile where profile_id = :xyz");
+$stmt->execute(array(":xyz" => $_GET['profile_id']));
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+if ( $row === false ) {
+    $_SESSION['error'] = 'Bad value for profile_id';
+    header( 'Location: index.php' ) ;
+    return;
+}
+
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Armando Zanone's Resume Registry</title>
+<?php require_once "head.php"; ?>
+</head>
+<body>
+<div class="container">
+
+<h1>Profile information</h1>
+
+<?php
+flashMessages();
+?>
+
+<p>First Name: <?= $row['first_name'] ?></p>
+<p>Last Name: <?= $row['last_name'] ?></p>
+<p>Email: <?= $row['email'] ?></p>
+<p>Headline: <?= $row['headline'] ?></p>
+<p>Position: </p>
+<ul>
+<?php
+
+$positions = loadPos($pdo, $_GET['profile_id']);
+
+foreach ($positions as &$pos) {
+    echo "<li>";
+	echo $pos["year"].": ".$pos["description"];
+	echo "</li>";
+}
+
+?>
+</ul>
+
+<p><a href="index.php">Done</a></p>
+
+</div>
+
+</body>
+</html>
+
+<!--yulia-->
+
+<?php
+session_start();
+require_once('pdo.php');
+require_once "bootstrap.php";
+
+if ( isset($_POST['logout']) ) {
+    header('Location: index.php');
+    return;
+}
+?>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Yulia Derbeneva</title>
+  </head>
+  <body>
+    <form method="post">
+    <h1>Profile information</h1>
+    <div class="container">
+    <?php
+    if ( isset($_SESSION['success']) ) {
+      echo('<p style="color: green;">'.htmlentities($_SESSION['success'])."</p>\n");
+      unset($_SESSION['success']);
+    }
+    if ( isset($_SESSION['error']) ) {
+      echo('<p style="color: red;">'.htmlentities($_SESSION['error'])."</p>\n");
+      unset($_SESSION['error']);
+    }
+
+    if ( ! isset($_GET['profile_id']) ) {
+      $_SESSION['error'] = "Missing profile_id";
+      header('Location: edit.php');
+      return;
+    }else{
+      $stmt = $pdo->prepare("SELECT * FROM Profile WHERE profile_id = :pid");
+      $stmt->execute(array(":pid" => $_GET['profile_id']));
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+      $first_name=htmlentities($row['first_name']);
+      $last_name=htmlentities($row['last_name']);
+      $email=htmlentities($row['email']);
+      $headline=htmlentities($row['headline']);
+      $summary=htmlentities($row['summary']);
+
+      $stmt2 = $pdo->prepare("SELECT year, description FROM Position WHERE profile_id = :pid");
+      $stmt2->execute(array(":pid" => $_GET['profile_id']));
+      $row2 = $stmt2->fetchALL(PDO::FETCH_ASSOC);
+      $desc=htmlentities($row2['description']);
+      $year=htmlentities($row2['year']);
+      $profile_id = $row['profile_id'];
+      echo "<p>First Name: $first_name</p>";
+      echo "<p>Last Name: $last_name</p>";
+      echo "<p>Email: $email</p>";
+      echo "<p>Headline: $headline</p>";
+      echo "<p>Summary: $summary</p>";
+      echo "<p>Position: </p>";
+
+      foreach ($row2 as $row4) {
+      echo "<ul><li>";
+      echo $row4['year'];
+      echo ": ";
+      echo $row4['description'];
+      echo "</li></ul>";
+    }
+
+    }
+
+    ?>
+    <p>
+      <a href="index.php">Done</a>
+    </p>
+    </div>
+  </form>
+  </body>
+</html>

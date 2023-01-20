@@ -76,10 +76,10 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fabiana Santos - b16238d0</title>
-    <link rel="stylesheet" href="assets/css/comum.css">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/icofont.min.css">
-    <link rel="stylesheet" href="assets/css/login.css">
+    <link rel="stylesheet" href="../assets/css/comum.css">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/icofont.min.css">
+    <link rel="stylesheet" href="../assets/css/login.css">
 </head>
 <body>
 <div class="container">
