@@ -16,56 +16,40 @@ if (isset($_POST['cancel'])) {
     header("Location: index.php");
     return;
 }
+
 //inserted variables - validating not set - handle incoming data
-if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST['headline'])) {
+if ((isset($_POST['first_name'])    && isset($_POST['last_name'])    && isset($_POST['headline'])    && isset($_POST["email"])    && isset($_POST["headline"])    && isset($_POST["summary"]))) {
     //validating  if blank
-    if (strlen($_POST['first_name']) < 1 || strlen($_POST['last_name']) < 1 || strlen($_POST['headline']) < 1) {
-        $_SESSION['error'] = 'All fields are required';
-        header("Location: add.php?profile_id=" . $_POST['profile_id']);
-        //header('Location: add.php');
+    if (strlen($_POST['first_name']) < 1   || strlen($_POST['last_name']) < 1  || strlen($_POST['headline']) < 1  || strlen($_POST['email']) < 1   || strlen($_POST['summary']) < 1 ) {
 
-        return;
-
+        $msg = validateProfile();
+        if (is_string($msg)) {
+            $_SESSION['error'] = $msg;
+            header("Location: add.php");
+            return;
+        }
+        ///validate position entries
+        $msg = validatePos();
+        if (is_string($msg)) {
+            $_SESSION['error'] = $msg;
+            header("Location: add.php");
+            return;
+        }
     }
-    if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-
-        $_SESSION["error"] = "Email must have an at_sign (@)";
-        error_log("Email must have an at_sign (@)", 0);
-        header("Location: add.php?profile_id=" . $_POST["profile_id"]);
-        //header('Location: login.php');
-        return;
-    }
-
-
-        /*    $msg = validateProfile();
-            if (is_string($msg)) {
-                $_SESSION['error'] = $msg;
-                header("Location: add.php");
-                return;
-            }
-            *///validate position entries
-            $msg = validatePos();
-            if (is_string($msg)) {
-                $_SESSION['error'] = $msg;
-                header("Location: add.php");
-                return;
-            }
 //Inserting valid data
-        //
-
-        $stmt = $pdo->prepare('INSERT INTO Profile  (user_id,first_name, last_name, email, headline, summary)
+    $stmt = $pdo->prepare('INSERT INTO Profile  (user_id,first_name, last_name, email, headline, summary)
             VALUES ( :uid, :fn, :ln, :em, :he, :su)');
 
-        $stmt->execute(array(
-                ':uid' => $_SESSION['user_id'],
-                ':fn' => $_POST['first_name'],
-                ':ln' => $_POST['last_name'],
-                ':em' => $_POST['email'],
-                ':he' => $_POST['headline'],
-                ':su' => $_POST['summary'])
-        );
+    $stmt->execute(array(
+            ':uid' => $_SESSION['user_id'],
+            ':fn' => $_POST['first_name'],
+            ':ln' => $_POST['last_name'],
+            ':em' => $_POST['email'],
+            ':he' => $_POST['headline'],
+            ':su' => $_POST['summary'])
+    );
 
-        $profile_id = $pdo->lastInsertId();
+    $profile_id = $pdo->lastInsertId();
 
     //insert the positions entries
     $rank = 1;
@@ -84,11 +68,11 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
         );
         $rank++;
     }
+
     $_SESSION["success"] = 'Record added.';
     header('Location: index.php');
     return;
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -100,9 +84,7 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
 </head>
 <body>
 <div class="container">
-    <form class="form-login" method="post">
-        <!--        <div class="login-card card" style="width: 18rem;">
-        -->
+    <form method="post">
         <div class="card-header bg-transparent">
             <h1>Adding Profile for <?php echo $_SESSION['name']; ?></h1>
             <?php flashMessages();  ?>
@@ -117,23 +99,22 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
             }
             ?>
         </div>
-        <form>
-            <label for="fn">First Name:</label>
+            <label for="first_name">First Name:</label>
             <input type="text" name="first_name" size="60">
             <br>
-            <label for="ln">Last Name:</label>-
+            <label for="last_name">Last Name:</label>
             <input type="text" name="last_name" size="60">
             <br>
-            <label for="mail">Email:</label>
+            <label for="email">Email:</label>
             <input type="text" name="email" size="60">
             <br>
-            <label for="he">Headline:</label>-
+            <label for="headline">Headline:</label>
             <input type="text" name="headline" size="60">
             <br>
-            <label for="su">Summary:</label>-
+            <label for="summary">Summary:</label>
             <textarea name="summary"></textarea>
             <p>Position: <input type="submit" id="addPos" value="+">
-            <!--<div id="position_fields"></div>-->
+            <div id="position_fields"></div>
             </p>
             <p>
                 <input class="btn btn-primary btn-sm" type="submit" value="Add" name="add">

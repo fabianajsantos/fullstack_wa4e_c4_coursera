@@ -2,7 +2,6 @@
 
 require_once "pdo.php";
 require_once "tools.php";
-
 session_start();
 
 if (!isset($_SESSION['name'])) {
@@ -13,26 +12,16 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
     if (strlen($_POST['first_name']) < 1 || strlen($_POST['last_name']) < 1 || strlen($_POST['headline']) < 1) {
         $_SESSION['error'] = 'All fields are required';
         header("Location: edit.php?profile_id=" . $_POST['profile_id']);
-        //header('Location: add.php');
-
-        return;
+         return;
     } else if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 
         $_SESSION["error"] = "Email must have an at_sign (@)";
         error_log("Email must have an at_sign (@)", 0);
         header("Location: edit.php?profile_id=" . $_POST["profile_id"]);
-        //header('Location: login.php');
         return;
     }
     //start validation message
-    //changed
-    /*    $msg = validateProfile();
-        if (is_string($msg)) {
-            $_SESSION['error'] = $msg;
-            header("Location: edit.php?profile_id=" . $_REQUEST["profile_id"]);
-            return;
-        }
-        *///validate position entries
+        ///validate position entries
         $msg = validatePos();
         if (is_string($msg)) {
             $_SESSION['error'] = $msg;
@@ -61,8 +50,6 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
     );
 
     //POSITIONS
-
-
     // Clear out the old position entries
     $stmt = $pdo->prepare('DELETE FROM Position WHERE profile_id=:pid');
     $stmt->execute(array(':pid' => $_REQUEST['profile_id']));
@@ -137,9 +124,6 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
     <?php flashMessages(); ?>
     <form method="post" action="edit.php">
       <input type="hidden" name="profile_id" value="<?= $profile_id ?>">
-  <!--      <input type="hidden" name="profile_id"
-               value="<?/*= htmlentities($_GET['profile_id']); */?>"
-        />-->
         <p>First Name:
             <input type="text" name="first_name" value="<?= $fn ?>"></p>
         <p>Last Name:
@@ -154,11 +138,11 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
         <p>Position: <input type="submit" id="addPos" value="+">
         <div id="position_fields">
         <?php //print_r($positions);
-
+                    ///HOW CAN I DO THIS!!!!!!!
             ?>
         </div>
         </p>
-        <!--include positions-->
+        <!--include positions- NOT WORKING-->
         <input class="btn btn-primary btn-sm" type="submit" value="Save">
         <a href="index.php" class="btn btn-primary btn-sm" role="button">Cancel</a>
     </form>

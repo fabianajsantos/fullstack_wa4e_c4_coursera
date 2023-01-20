@@ -1,5 +1,3 @@
-
-
     <h1>Chuck Severance's Resume Registry</h1>
     <?php
     if (isset($_SESSION["error"])) {
@@ -32,21 +30,8 @@
                 echo '<tr>';
                 echo '<td>' . (htmlentities($row['last_name'])) . "&nbsp" . (htmlentities($row['first_name'])) . '</td>';
                 echo '<td>' . (htmlentities($row['headline'])) . '</td>';
-                //header("Location: view.php?profile_id=" . $_POST["profile_id"]);
-                /*echo '<td>' . '<a href="edit.php?profile_id=' . $row['profile_id'] . '">Edit</a>  ' . '</td>';
-                echo '</tr>';
-
-                /*      echo '<tr>';
-                //echo '<td>' . '<a href="view.php?profile_id=' . $row['profile_id'] . '">Edit</a>  ' .'</td>';
-                echo '<td>' . (htmlentities($row['last_name'])) . "&nbsp" . (htmlentities($row['first_name'])) .  '</td>';
-                echo '<td>' . (htmlentities($row['headline'])) . '</td>';
-                //header("Location: edit.php?profile_id=" . $_POST["profile_id"]);
-                echo '<td>' . '<a href="edit.php?profile_id=' . $row['profile_id'] . '">Edit</a>  ' . '</td>';
-                echo '<td>' . '<a href="delete.php?profile_id=' . $row['profile_id'] . '">Delete</a>' . '</td>';
-                echo '</tr>';*/
             }
             ?>
-
         </tbody>
     </table>
 
