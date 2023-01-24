@@ -145,6 +145,40 @@ if ((isset($_POST['first_name'])    && isset($_POST['last_name'])    && isset($_
                     </div>'
                     );
                 });//end click
+                $('#addEdu').click(function(event){
+                    event.preventDefault();
+                    if(countEdu >= 3){
+                        alert("Maximum of nine education entries exceeded");
+                        return;
+                    }
+                    countEdu++;
+                    window.console.log("Adding education " +countEdu);
+
+                    //grab some html with hot spots and insert into the dom
+                    var source = $("#edu-Template").html();
+                    $('#edu_fields').append(source.replace(/@COUNT@/g, countEdu));
+
+                    //Add the even handler to the new ones
+                    $('.school').autocomplete({
+                        source: "school.php"
+                    });
+                });
+
+                $('.school').autocomplete({
+                    source: "school.php"
+                });
+
             });//end ready
         </script>
+    <!--   html with substitution hot spots-->
+    <script id="edu-template" type="text">
+    <div id="edu@COUNT@">
+    <p>Year:<input type="text" name="edu_year@COUNT@" value="" />
+    <input type = "button"  value="-" onclick="$('#edu@COUNT@').remove(); return false;"><br>
+    <p>School:<input type="text" size="80" name="edu_year@COUNT@" class="school" value="" />
+    </p>
+    </div>
+    </script>
+</div>
 </body>
+</html>

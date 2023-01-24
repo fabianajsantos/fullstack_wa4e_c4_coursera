@@ -9,18 +9,13 @@ if (!isset($_SESSION['name'])) {
 }
 if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST['headline']) && isset($_POST['profile_id'])) {
 // Data validation
-    if (strlen($_POST['first_name']) < 1 || strlen($_POST['last_name']) < 1 || strlen($_POST['headline']) < 1) {
-        $_SESSION['error'] = 'All fields are required';
-        header("Location: edit.php?profile_id=" . $_POST['profile_id']);
-         return;
-    } else if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-
-        $_SESSION["error"] = "Email must have an at_sign (@)";
-        error_log("Email must have an at_sign (@)", 0);
-        header("Location: edit.php?profile_id=" . $_POST["profile_id"]);
+    //start validation message
+    $msg = validateProfile();
+    if (is_string($msg)) {
+        $_SESSION['error'] = $msg;
+        header("Location: edit.php?profile_id=" . $_REQUEST["profile_id"]);
         return;
     }
-    //start validation message
         ///validate position entries
         $msg = validatePos();
         if (is_string($msg)) {
@@ -106,6 +101,18 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
 //load positions
     $positions = loadPos($pdo, $_REQUEST['profile_id']);
 
+
+    /*
+     * $stmt = $pdo->prepare('SELECT name FROM Institution WHERE name LIKE :prefix');
+$stmt->execute(array( ':prefix' => $_REQUEST['term']."%"));
+$retval = array();
+while ( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
+  $retval[] = $row['name'];
+}
+
+echo(json_encode($retval, JSON_PRETTY_PRINT));
+     */
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -182,30 +189,6 @@ if ((isset($_POST['first_name']) && isset($_POST['last_name'])) && isset($_POST[
                     </div>'
                 );
             });//end click
-
-            $('#addEdu').click(function(event){
-                event.preventDefault();
-                if(countEdu >= 3){
-                    alert("Maximum of nine education entries exceeded");
-                    return;
-                }
-                countEdu++;
-                window.console.log("Adding education " +countEdu);
-
-                //grab some html with hot spots and insert into the dom
-                var source = $("#edu-Template").html();
-                $('#edu_fields').append(source.replace(/@COUNT@/g, countEdu));
-
-                //Add the even handler to the new ones
-                $('.scholl').autocomplete({
-                    source: "school.php"
-                });
-            });
-            
-            $('.scholl').autocomplete({
-                source: "school.php"
-            })
-
         });//end ready
     </script>
 </body>

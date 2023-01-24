@@ -53,12 +53,42 @@ function loadPos($pdo, $profile_id)
 {
     $stmt = $pdo->prepare('select * from position where profile_id = :prof Order by rank');
     $stmt->execute(array(':prof' => $profile_id));
-    $positions = array();
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
-    {
-        $positions[] = $row;
-    }
+    $positions = $stmt->fetchALL(PDO::FETCH_ASSOC);
     return $positions;
+}
+
+function loadEdu($pdo, $profile_id)
+{
+      $stmt = $pdo->prepare('select year, name from education
+                              JOIN institution ON education.institution_id = institution.institution_id
+                              where profile_id = :prof Order by rank');
+      $stmt->execute(array(':prof' => $profile_id));
+      $educations = $stmt->fetchALL(PDO::FETCH_ASSOC);
+      return $educations;
+}
+
+function insertPositions($pdo, $profile_id)
+{
+    $rank = 1;
+    for ($i = 1; $i <= 3; $i++) {
+        if (!isset($_POST['year' . $i])) continue;
+        if (!isset($_POST['desc' . $i])) continue;
+
+        $year = $_POST['year' . $i];
+        $desc = $_POST['desc' . $i];
+
+        $stmt = $pdo->prepare('INSERT INTO Position
+        (profile_id, rank, year, description)
+        VALUES ( :pid, :rank, :year, :desc)');
+
+        $stmt->execute(array(
+                ':pid' => $_REQUEST['profile_id'],
+                ':rank' => $rank,
+                ':year' => $year,
+                ':desc' => $desc)
+        );
+        $rank++;
+    }
 }
 
 
