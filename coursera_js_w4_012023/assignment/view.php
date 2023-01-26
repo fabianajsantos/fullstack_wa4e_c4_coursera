@@ -46,6 +46,21 @@ if ($row === false) {
     <p>Last Name: <?= $row['last_name'] ?></p>
     <p>Email: <?= $row['email'] ?></p>
     <p>Headline: <?= $row['headline'] ?></p>
+
+    <p>Education: </p>
+    <ul>
+        <?php
+
+        $educations = loadEdu($pdo, $_REQUEST['profile_id']);
+        //   $positions = loadPos($pdo, $_GET['profile_id']);
+
+        foreach ($educations as &$edu) {
+            echo "<li>";
+            echo $edu["year"] . ": " . $edu["name"];
+            echo "</li>";
+        }
+        ?>
+    </ul>
     <p>Position: </p>
     <ul>
         <?php
@@ -60,6 +75,7 @@ if ($row === false) {
         }
         ?>
     </ul>
+
 
     <p><a href="index.php">Done</a></p>
 

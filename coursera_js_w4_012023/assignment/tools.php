@@ -33,7 +33,25 @@ function validateProfile()
 
 function validatePos()
 {
-    for ($i = 1; $i <= 3; $i++) {
+    for ($i = 0; $i <= 3; $i++) {
+        if (!isset($_POST['year' . $i])) continue;
+        if (!isset($_POST['desc' . $i])) continue;
+        $year = $_POST['year' . $i];
+        $desc = $_POST['desc' . $i];
+        if (strlen($year) == 0 || strlen($desc) == 0) {
+            return "All fields are required";
+        }
+        if (!is_numeric($year)) {
+            return "Position must be numeric";
+        }
+    }
+    return true;
+
+}
+
+function validateEdu()
+{
+    for ($i = 0; $i <= 3; $i++) {
         if (!isset($_POST['year' . $i])) continue;
         if (!isset($_POST['desc' . $i])) continue;
         $year = $_POST['year' . $i];
@@ -88,6 +106,30 @@ function insertPositions($pdo, $profile_id)
                 ':desc' => $desc)
         );
         $rank++;
+    }
+
+    function insertEducations($pdo, $profile_id)
+    {
+        $rank = 1;
+        for ($i = 1; $i <= 3; $i++) {
+            if (!isset($_POST['year' . $i])) continue;
+            if (!isset($_POST['edu_school' . $i])) continue;
+
+            $year = $_POST['year' . $i];
+            $edu_school = $_POST['edu_school' . $i];
+
+            $stmt = $pdo->prepare('INSERT INTO education
+        (profile_id, rank, year, edu_school)
+        VALUES ( :pid, :rank, :year, :edu_school)');
+
+            $stmt->execute(array(
+                    ':pid' => $_REQUEST['profile_id'],
+                    ':rank' => $rank,
+                    ':year' => $year,
+                    ':edu_school' => $edu_school)
+            );
+            $rank++;
+        }
     }
 }
 
